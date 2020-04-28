@@ -41,6 +41,9 @@ else:
     print("체크 용 done열 생성")
 
 
+idCount=0
+count=0
+fail_count = 0
 
 # 엑셀의 2번째 줄부터(1번째 줄은 col로 설정) 불러와서 정보 parsing
 for i in range(0,len(df)):
@@ -51,7 +54,7 @@ for i in range(0,len(df)):
     if df.iloc[i,1]=='O':
         print(instaid," 이미 좋아요 하고 넘어감")
     else:
-        print("안넘어가")
+        print("작업 필요")
         ## url에 접근
         # url='https://www.instagram.com/kissrealslow/'
         driver.get(url)
@@ -68,37 +71,30 @@ for i in range(0,len(df)):
             links.append(instaLink + linkAddr)
 
         instaId = url.split('/')[3]
-        print(instaId)
+        idCount = idCount+1
+        print(idCount,'명 째 -', instaId)
         links = links[0:3]
         for s in links:
             print(s)
 
         for url in links:
-            driver.get(url)
-            time.sleep(3)
-            driver.find_element_by_css_selector("._8-yf5").click()
-            print("성공")
-            time.sleep(2)
+            rndSec = random.randint(3, 5)
+            count = count + 1
+            try:
+                print("좋아요 - 총",count,"번")
+                driver.get(url)
+                time.sleep(rndSec)
+                driver.find_element_by_css_selector("._8-yf5").click()
+                print("성공")
+                time.sleep(rndSec)
+            except Exception as e:
+                fail_count = fail_count + 1
+                print("실패",fail_count,"번")
+                time.sleep(rndSec)
 
         df.iloc[i, 1] = 'O'
-
         df.to_excel(where_file, 'Sheet1', index=False, encoding='utf-8')
 
-
-
-
-
-
-
-
-
-
-# 불러와서 done 열에 동그라미 들어가있는지 확인하고
-# 안들어가있을 경우 하나씩 url 들어가고 done 열에 동그라미 추가
-
-
-
-
-
-
-
+        for m in range(1,6):
+            time.sleep(m * 60)
+            print("딜레이",m,"분지남")
